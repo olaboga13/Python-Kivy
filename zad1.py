@@ -12,75 +12,75 @@ from kivy.vector import Vector
 """
 klasa reprezentujaca pilke (jej ruch)
 """
-class PongBall(Widget):
+class Pilka(Widget):
 
     # predkosc pilki na osiach x i y
-    velocity_x = NumericProperty(10000)
-    velocity_y = NumericProperty(10000)
-    velocity = ReferenceListProperty(velocity_x, velocity_y)
+    predkosc_x = NumericProperty(10000)
+    predkosc_y = NumericProperty(10000)
+    predkosc = ReferenceListProperty(predkosc_x, predkosc_y)
 
-    def move(self):
-        self.pos = Vector(*self.velocity) + self.pos
+    def ruch(self):
+        self.pos = Vector(*self.predkosc) + self.pos
 """
 klasa reprezentujaca paletke tenisowa
 """
-class PongPaddle(Widget):
+class Paletka(Widget):
 
-    score = NumericProperty(0)
+    wynik = NumericProperty(0)
 
-    def bounce_ball(self, ball):
-        if self.collide_widget(ball):
-            vx, vy = ball.velocity
-            offset = (ball.center_y - self.center_y) / (self.height / 2)
-            bounced = Vector(-1 * vx,vy)
-            vel = bounced * 1.1
-            ball.velocity = vel.x, vel.y + offset
+    def odbicie_pilki(self, pilka):
+        if self.collide_widget(pilka):
+            px, py = pilka.predkosc
+            offset = (pilka.center_y - self.center_y) / (self.height / 2)
+            odbicie = Vector(-1 * px,py)
+            pred = odbicie * 1.1
+            pilka.predkosc = pred.x, pred.y + offset
 """
 klasa przedstawiajaca gre
 """
-class PongGame(Widget):
-    ball = ObjectProperty(None)
-    player1 = ObjectProperty(None)
-    player2 = ObjectProperty(None)
+class GraPong(Widget):
+    pilka = ObjectProperty(None)
+    gracz1 = ObjectProperty(None)
+    gracz2 = ObjectProperty(None)
 
-    def serve_ball(self, vel = (4,0)):
-        self.ball.center = self.center
-        self.ball.velocity = vel
+    def serw_pilki(self, pred = (4,0)):
+        self.pilka.center = self.center
+        self.pilka.predkosc = pred
 
-    def update(self, dt):
-        self.ball.move()
+    def odswiez(self, dt):
+        self.pilka.ruch()
 
         # ruch paletek
-        self.player1.bounce_ball(self.ball)
-        self.player2.bounce_ball(self.ball)
+        self.gracz1.odbicie_pilki(self.pilka)
+        self.gracz2.odbicie_pilki(self.pilka)
 
         # ruch pilki gora-dol
-        if(self.ball.y< self.y) or (self.ball.top > self.top):
-            self.ball.velocity_y *= -1
+        if(self.pilka.y< self.y) or (self.pilka.top > self.top):
+            self.pilka.predkosc_y *= -1
 
         # zdobycie punktu
-        if self.ball.x < self.x:
-            self.player2.score += 1
-            self.serve_ball(vel=(4, 0))
-        if self.ball.x > self.width:
-            self.player1.score += 1
-            self.serve_ball(vel=(-4, 0))
+        if self.pilka.x < self.x:
+            self.gracz2.wynik += 1
+            self.serw_pilki(pred=(4, 0))
+        if self.pilka.x > self.width:
+            self.gracz1.wynik += 1
+            self.serw_pilki(pred=(-4, 0))
     #poruszanie paletkami przez uzytkownika
     def on_touch_move(self, touch):
         if touch.x < self.width / 3:
-            self.player1.center_y = touch.y
+            self.gracz1.center_y = touch.y
         if touch.x > self.width - self.width /3:
-            self.player2.center_y = touch.y
+            self.gracz2.center_y = touch.y
 
 """
 aplikacja
 """
 class PongApp(App):
     def build(self):
-        game = PongGame()
-        game.serve_ball()
-        Clock.schedule_interval(game.update, 1.0/60.0)
-        return game
+        gra = GraPong()
+        gra.serw_pilki()
+        Clock.schedule_interval(gra.odswiez, 1.0/60.0)
+        return gra
 """
 uruchomienie gry
 """

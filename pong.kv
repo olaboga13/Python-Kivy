@@ -2,10 +2,10 @@
 # nadanie wlasciwosci zmiennym wykorzystanych w grze:
 # ustawienie wyswietlacza, pilki, paletek,
 
-<PongGame>:
-    ball: pong_ball
-    player1: player_left
-    player2: player_right
+<GraPong>:
+    pilka: pilka_pong
+    gracz1: gracz_lewy
+    gracz2: gracz_prawy
 
     canvas:
         Rectangle:
@@ -16,35 +16,35 @@
         font_size: 120
         center_x: root.width / 4
         top: root.top - 50
-        text: str(root.player1.score)
+        text: str(root.gracz1.wynik)
 
     Label:
         font_size: 120
         center_x: root.width * 3 / 4
         top: root.top - 50
-        text: str(root.player2.score)
+        text: str(root.gracz2.wynik)
 
-    PongBall:
-        id: pong_ball
+    Pilka:
+        id: pilka_pong
         center: self.parent.center
 
-    PongPaddle:
-        id: player_left
+    Paletka:
+        id: gracz_lewy
         x: root.x
         center_y: root.center_y
-    PongPaddle:
-        id: player_right
+    Paletka:
+        id: gracz_prawy
         x: root.width - self.width
         center_y: root.center_y
 
-<PongPaddle>:
+<Paletka>:
     size: 25, 200
     canvas:
         Rectangle:
             pos:self.pos
             size:self.size
 
-<PongBall>:
+<Pilka>:
     size: 50, 50
     canvas:
         Ellipse:
